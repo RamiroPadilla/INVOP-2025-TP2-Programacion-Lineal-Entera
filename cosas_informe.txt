@@ -1,0 +1,76 @@
+\section{Instancias}
+Para realizar nuestro analisis, primero generamos distintas variaciones de instancias segun los parametros \textit{cant_clientes}, textit{dist_max} y textit{costo_repartidor} descriptos en la consigna. Para todas las instancias, elegimos al azar un 10% de los clientes, que van a necesitar refrigeracion, y un 15% de los clientes, que van a ser exclusivos. Asi, distinguimos tres tipos de instancias separadas. 
+
+Por un lado utilizamos 10 instancias de tipo \textbf{"genericas"} que buscan modelar un escenario donde los clientes estan dispersos de forma aleatoria, sin seguir ningun criterio especifico. Para estas instancias, mantuvimos los siguientes parametros:
+\begin{itemize}
+  \item \textit{cant_clientes} = 20
+  \item \textit{dist_max} = 10,35 (Usamos 10 para 5 instancias, y 35 para otras 5 instancias)
+  \item \textit{costo_repartidor} = 0,5,15 (Usamos 0 para 2 instancias, 5 para 3 instancias y 15 para otras 5 instancias)
+\end{itemize}
+
+Por otro lado, utilizamos 10 instancias de tipo \textbf{"cluster"}, que modelan un escenario donde los clientes estan agrupados en 3 clusters (donde cada uno de los clusters esta centrado en una coordenada fija), distribuyendo el numero de clientes por cluster de forma equitativa, modelando asi un escenario mas realista. Para estas instancias, utilizamos los siguientes parametros:
+\begin{itemize}
+  \item \textit{cant_clientes} = 60
+  \item \textit{dist_max} = 10
+  \item \textit{costo_repartidor} = 5
+\end{itemize}
+
+Finalmente, las instancias de tipo "dificil"  ??? para 
+\begin{itemize}
+  \item \textit{cant_clientes} = 
+  \item \textit{dist_max} = 
+  \item \textit{costo_repartidor} = 
+\end{itemize}
+
+\newpage
+
+\section{Análisis de Resultados}
+Para analizar la performance de nuestros modelos, realizamos un analisis en dos partes. Por un lado, comparamos los valores optimos obtenidos en los distintos modelos y por otro, comparamos el tiempo de computo sobre el modelo completo, sin las restricciones deseables.
+
+\subsection{Comparacion de Optimos}
+Para comparar los valores optimos de distintas instancias, consideramos cuatro modelos distintos:
+\begin{itemize}
+  \item El modelo inicial, donde cada cliente es visitado por el camion una unica vez.
+  \item El modelo completo, donde se modela la asignacion de repartidores a pie o en bicil
+  \item \textit El modelo completo con la primer restriccion deseable, es decir que cada repartidor a pie/bici contratado realice al menos 4 entregas.
+  \item \textit El modelo completo con la segunda restriccion deseable, es decir, que existan determinados clientes que deban ser visitados por el camion. (Sin la restriccion deseable anterior)
+\end{itemize}
+
+Asi, evaluamos a cada uno de estos modelos respecto a las instancias tipo "genericas" descriptas en la seccion anterior, y comparamos el valor de la funcion objetivo, obteniendo los siguientes resultados:
+\begin{table}[H]
+\begin{tabular}{lcccc}
+ \hline
+\textbf{Instancia} & \textbf{Inicial} & \textbf{Completo} & \textbf{Deseable 1} & \textbf{Deseable 2} \\
+ \hline
+ Instancia 1 (Costo 0) & 370 &  341 (+7 a pie) & 379 (+0 a pie) & 357 (+6 a pie) \\
+ Instancia 2 (Costo 0) & 356 &  325 (+5 a pie) & 356 (+0 a pie) & 325 (+5 a pie) \\
+ Instancia 3 (Costo 5) & 409 &  395 (+2 a pie) & 409 (+0 a pie) & 395 (+2 a pie) \\
+ Instancia 4 (Costo 5) & 394 &  390 (+1 a pie) & 394 (+0 a pie) & 390 (+1 a pie) \\
+ Instancia 5 (Costo 5) & 414 &  405 (+2 a pie) & 414 (+0 a pie) & 405 (+2 a pie) \\
+\end{tabular}
+\caption{Comparación de costos óptimos y entregas a pie entre configuraciones de modelo con dist_max = 10}
+\end{table}
+\quad
+\begin{table}[H]
+\centering
+\begin{tabular}{lcccc}
+\hline
+\textbf{Instancia} & \textbf{Inicial} & \textbf{Completo} & \textbf{Deseable 1} & \textbf{Deseable 2} \\
+\hline
+Instancia 6 (costo 15) & 431 & 380 (+7 a pie) & 403 (+8 a pie) & 395 (+6 a pie) \\
+Instancia 7 (costo 15) & 365 & 329 (+3 a pie) & 357 (+4 a pie) & 343 (+1 a pie) \\
+Instancia 8 (costo 15) & 356 & 340 (+3 a pie) & 356 (+0 a pie) & 340 (+3 a pie) \\
+Instancia 9 (costo 15) & 413 & 359 (+4 a pie) & 398 (+4 a pie) & 382 (+4 a pie) \\
+Instancia 10 (costo 15) & 406 & 374 (+6 a pie) & 390 (+4 a pie) & 393 (+2 a pie) \\
+\hline
+\end{tabular}
+\caption{Comparación de costos óptimos y entregas a pie entre configuraciones de modelo con dist_max = 35}
+\end{table}
+
+Asi, podemos observar que el modelo completo resulta ser una mejora respecto al modelo inicial (dado que estamos minimizando), mientras que agregar las restricciones deseables aumenta el costo de la asignacion pero sigue sin ser peor que el modelo inicial.
+
+\subsection{Comparacion de Computo}
+
+\newpage
+
+
