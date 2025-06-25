@@ -69,7 +69,7 @@ def cargar_instancia():
     return instancia
 
 
-def agregar_variables(prob, instancia, version_modelo, deseable):
+def agregar_variables(prob, instancia, version_modelo, deseable_2):
 
     # Formulacion Miller, Tucker and Zemlin
     
@@ -106,7 +106,7 @@ def agregar_variables(prob, instancia, version_modelo, deseable):
                             types = ['B'] * len(nombres_Yij), 
                             names = nombres_Yij)
         
-        if(deseable):
+        if(deseable_2):
             # delta_i = 1 si desde la parada i se entregan al menos 4 pedidos a pie
             # REMUEVO LA POSIBILIDAD DE QUE DEL CLIENTE 1 SALGAN REPARTIDORES A PIE/BICI
             nombres_delta = [f"delta_{i}" for i in range(2,n+1)]
@@ -117,7 +117,7 @@ def agregar_variables(prob, instancia, version_modelo, deseable):
                                 names = nombres_delta)
 
 
-def agregar_restricciones(prob, instancia, version_modelo, deseables):
+def agregar_restricciones(prob, instancia, version_modelo, deseable_1, deseable_2):
 
     n = instancia.cant_clientes
 
@@ -219,7 +219,7 @@ def agregar_restricciones(prob, instancia, version_modelo, deseables):
                                             names=[f"RefLim_{i}"])
             
     # Restricciones deseables 
-    if (deseables):
+    if (deseable_1):
         # (8) Clientes exclusivos atendidos por camion
         for j in instancia.exclusivos:
             idx_X = [f"X_{i}_{j}" for i in range(1, n+1) if i != j]
@@ -228,7 +228,7 @@ def agregar_restricciones(prob, instancia, version_modelo, deseables):
                                         rhs=[1.0], 
                                         names=[f"Exclusivo_{j}"])
 
-        
+    if (deseable_2):
         for i in range(2, n+1):
             idxs = [f"Y_{i}_{j}" for j in instancia.pares_Y[i]]
             if idxs:
@@ -251,9 +251,9 @@ def agregar_restricciones(prob, instancia, version_modelo, deseables):
                                             names=[f"Delta0_{i}"])     
   
 
-def armar_lp(prob, instancia, version, deseables):
-    agregar_variables(prob, instancia, version, deseables)
-    agregar_restricciones(prob, instancia,version, deseables)
+def armar_lp(prob, instancia, version, deseable_1, deseable_2):
+    agregar_variables(prob, instancia, version, deseable_2)
+    agregar_restricciones(prob, instancia,version, deseable_1, deseable_2)
     prob.objective.set_sense(prob.objective.sense.minimize)
     prob.write('recorridoMixto.lp')
 
@@ -360,9 +360,12 @@ def main():
     opcion = int(input("Ingresar version de modelo (1 = inicial, 2 = completo) "))
     version_modelo = (opcion == 1)
 
+    deseables = False
     deseable_1 = False
     deseable_2 = False
     if(not version_modelo):
+        restr_deseables = int(input("Agregar restricciones deseables? (1 = si, 2 = no) "))
+        deseables = (restr_deseables == 1)
         restr_deseable_1 = int(input("Agregar restriccion deseable 1? (1 = si, 2 = no) "))
         deseable_1 = (restr_deseable_1 == 1)
         restr_deseable_2 = int(input("Agregar restriccion deseable 2? (1 = si, 2 = no) "))
