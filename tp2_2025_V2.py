@@ -69,7 +69,7 @@ def cargar_instancia():
     return instancia
 
 
-def agregar_variables(prob, instancia, version_modelo, deseable_2):
+def agregar_variables(prob, instancia, version_modelo, deseable):
 
     # Formulacion Miller, Tucker and Zemlin
     
@@ -106,7 +106,7 @@ def agregar_variables(prob, instancia, version_modelo, deseable_2):
                             types = ['B'] * len(nombres_Yij), 
                             names = nombres_Yij)
         
-        if(deseable_2):
+        if(deseable):
             # delta_i = 1 si desde la parada i se entregan al menos 4 pedidos a pie
             # REMUEVO LA POSIBILIDAD DE QUE DEL CLIENTE 1 SALGAN REPARTIDORES A PIE/BICI
             nombres_delta = [f"delta_{i}" for i in range(2,n+1)]
@@ -117,30 +117,30 @@ def agregar_variables(prob, instancia, version_modelo, deseable_2):
                                 names = nombres_delta)
 
 
-def agregar_restricciones(prob, instancia, version_modelo, deseable_1, deseable_2):
+def agregar_restricciones(prob, instancia, version_modelo, deseables):
 
     n = instancia.cant_clientes
 
-    # Restricciones Metodologia inicial
+    # Restricciones Modelo inicial
     if (version_modelo):
         # El camion entra y sale una vez de cada cliente
-        for i in range(n):
+        for i in range(1,n+1):
             idx = [f"X_{i}_{j}" for j in range(1,n+1) if i!=j]
             idx_inv = [f"X_{j}_{i}" for j in range(1,n+1) if i!=j]
 
-            # (1) De todo cliente hay que salir
+            # (a) De todo cliente hay que salir
             prob.linear_constraints.add(lin_expr=[[idx, [1] * (n - 1)]],
                                         senses=['E'], 
                                         rhs=[1],
-                                        names = [f'Salgo_de_cliente{i+1}']) 
+                                        names = [f'Salgo_de_cliente{i}']) 
             
-            # (2) A todo cliente se debe llegar
+            # (b) A todo cliente se debe llegar
             prob.linear_constraints.add(lin_expr=[[idx_inv, [1] * (n - 1)]],
                                         senses=['E'], 
                                         rhs=[1],
-                                        names = [f'Llego_a_cliente{i+1}']) 
+                                        names = [f'Llego_a_cliente{i}']) 
         
-        # (3) Eliminar subtours
+        # (c) Eliminar subtours
         for i in range(2, n+1):
             for j in range(2, n+1):
                 if i!=j:
@@ -219,7 +219,7 @@ def agregar_restricciones(prob, instancia, version_modelo, deseable_1, deseable_
                                             names=[f"RefLim_{i}"])
             
     # Restricciones deseables 
-    if (deseable_1):
+    if (deseables):
         # (8) Clientes exclusivos atendidos por camion
         for j in instancia.exclusivos:
             idx_X = [f"X_{i}_{j}" for i in range(1, n+1) if i != j]
@@ -228,7 +228,7 @@ def agregar_restricciones(prob, instancia, version_modelo, deseable_1, deseable_
                                         rhs=[1.0], 
                                         names=[f"Exclusivo_{j}"])
 
-    if (deseable_2):
+        
         for i in range(2, n+1):
             idxs = [f"Y_{i}_{j}" for j in instancia.pares_Y[i]]
             if idxs:
@@ -251,9 +251,9 @@ def agregar_restricciones(prob, instancia, version_modelo, deseable_1, deseable_
                                             names=[f"Delta0_{i}"])     
   
 
-def armar_lp(prob, instancia, version, deseable_1, deseable_2):
-    agregar_variables(prob, instancia, version, deseable_2)
-    agregar_restricciones(prob, instancia,version, deseable_1, deseable_2)
+def armar_lp(prob, instancia, version, deseables):
+    agregar_variables(prob, instancia, version, deseables)
+    agregar_restricciones(prob, instancia,version, deseables)
     prob.objective.set_sense(prob.objective.sense.minimize)
     prob.write('recorridoMixto.lp')
 
@@ -262,7 +262,7 @@ def resolver_lp(prob):
     # https://www.ibm.com/docs/en/cofz/12.10.0?topic=cplex-list-parameters
     
     # Este siempre activo, la otra strategy no la vimos
-    # prob.parameters.mip.strategy.search.set(1) # Traditional branch-and-cut search
+    prob.parameters.mip.strategy.search.set(1) # Traditional branch-and-cut search
 
     # PREPROCESAMIENTO ACTIVO
     # prob.parameters.preprocessing.presolve.set(1) #
@@ -272,7 +272,7 @@ def resolver_lp(prob):
     # prob.parameters.mip.strategy.nodeselect.set(1) # Best-bound search
 
     # HEURISTICAS
-    # prob.parameters.mip.strategy.heuristicfreq.set(10) # Heuristicas periodicas cada 10 nodos
+    # prob.parameters.mip.strategy.heuristicfreq.set(20) # Heuristicas periodicas cada 20 nodos
     # prob.parameters.mip.strategy.heuristiceffort.set(0) # 0 = Heuristicas desactivadas
 
     # TODOS LOS CORTES DESACTIVADOS
