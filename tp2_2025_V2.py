@@ -69,7 +69,7 @@ def cargar_instancia():
     return instancia
 
 
-def agregar_variables(prob, instancia, version_modelo, deseable_2):
+def agregar_variables(prob, instancia, version_modelo, deseable_1):
 
     # Formulacion Miller, Tucker and Zemlin
     
@@ -106,7 +106,7 @@ def agregar_variables(prob, instancia, version_modelo, deseable_2):
                             types = ['B'] * len(nombres_Yij), 
                             names = nombres_Yij)
         
-        if(deseable_2):
+        if(deseable_1):
             # delta_i = 1 si desde la parada i se entregan al menos 4 pedidos a pie
             # REMUEVO LA POSIBILIDAD DE QUE DEL CLIENTE 1 SALGAN REPARTIDORES A PIE/BICI
             nombres_delta = [f"delta_{i}" for i in range(2,n+1)]
@@ -220,15 +220,6 @@ def agregar_restricciones(prob, instancia, version_modelo, deseable_1, deseable_
             
     # Restricciones deseables 
     if (deseable_1):
-        # (8) Clientes exclusivos atendidos por camion
-        for j in instancia.exclusivos:
-            idx_X = [f"X_{i}_{j}" for i in range(1, n+1) if i != j]
-            prob.linear_constraints.add(lin_expr=[ [idx_X, [1.0]*len(idx_X)] ], 
-                                        senses=['E'], 
-                                        rhs=[1.0], 
-                                        names=[f"Exclusivo_{j}"])
-
-    if (deseable_2):
         for i in range(2, n+1):
             idxs = [f"Y_{i}_{j}" for j in instancia.pares_Y[i]]
             if idxs:
@@ -248,11 +239,21 @@ def agregar_restricciones(prob, instancia, version_modelo, deseable_1, deseable_
                 prob.linear_constraints.add(lin_expr=[ [[f"delta_{i}"], [1.0]] ],
                                             senses=['E'], 
                                             rhs=[0.0], 
-                                            names=[f"Delta0_{i}"])     
+                                            names=[f"Delta0_{i}"])  
+
+
+    if (deseable_2):
+        # (8) Clientes exclusivos atendidos por camion
+        for j in instancia.exclusivos:
+            idx_X = [f"X_{i}_{j}" for i in range(1, n+1) if i != j]
+            prob.linear_constraints.add(lin_expr=[ [idx_X, [1.0]*len(idx_X)] ], 
+                                        senses=['E'], 
+                                        rhs=[1.0], 
+                                        names=[f"Exclusivo_{j}"])
   
 
 def armar_lp(prob, instancia, version, deseable_1, deseable_2):
-    agregar_variables(prob, instancia, version, deseable_2)
+    agregar_variables(prob, instancia, version, deseable_1)
     agregar_restricciones(prob, instancia,version, deseable_1, deseable_2)
     prob.objective.set_sense(prob.objective.sense.minimize)
     prob.write('recorridoMixto.lp')
@@ -261,19 +262,27 @@ def armar_lp(prob, instancia, version, deseable_1, deseable_2):
 def resolver_lp(prob):
     # https://www.ibm.com/docs/en/cofz/12.10.0?topic=cplex-list-parameters
     
-    # Este siempre activo, la otra strategy no la vimos
-    prob.parameters.mip.strategy.search.set(1) # Traditional branch-and-cut search
+    ###### Modo DEFAULT: ######
+    # prob.parameters.mip.strategy.search.set(1)  # Traditional branch-and-cut search
+    
+    # SELECCION DE NODOS
+    # prob.parameters.mip.strategy.nodeselect.set(0) # Depth-first search
 
-    # PREPROCESAMIENTO ACTIVO
-    # prob.parameters.preprocessing.presolve.set(1) #
+    # TIEMPO LIMITE
+    # prob.parameters.mip.tolerances.mipgap.set(0.03) # Por gap (3%)
+    # prob.parameters.timelimit.set(1500)             # Por tiempo (15 minutos)
+
+    ###### ############# ######
+
+    # PREPROCESAMIENTO 
+    # prob.parameters.preprocessing.presolve.set(0) # Apagado
 
     # ESTRATEGIA DE SELECCION DE NODOS
-    # prob.parameters.mip.strategy.nodeselect.set(0) # Depth-first search
     # prob.parameters.mip.strategy.nodeselect.set(1) # Best-bound search
 
     # HEURISTICAS
-    # prob.parameters.mip.strategy.heuristicfreq.set(20) # Heuristicas periodicas cada 20 nodos
-    # prob.parameters.mip.strategy.heuristiceffort.set(0) # 0 = Heuristicas desactivadas
+    # prob.parameters.mip.strategy.heuristicfreq.set(20)  # Heuristicas periodicas cada 20 nodos
+    # prob.parameters.mip.strategy.heuristiceffort.set(0) # Heuristicas desactivadas
 
     # TODOS LOS CORTES DESACTIVADOS
     # prob.parameters.mip.cuts.cliques.set(-1)
@@ -289,9 +298,10 @@ def resolver_lp(prob):
     # prob.parameters.mip.cuts.disjunctive.set(-1)
     # prob.parameters.mip.cuts.bqp.set(-1)
 
-    # TIEMPO LIMITE
-    # prob.parameters.mip.tolerances.mipgap.set(0.03) # por gap (3%)
-    # prob.parameters.timelimit.set(300) # por tiempo (3 minutos)
+    # VARIABLE SELECTION 
+    # prob.parameters.mip.strategy.variableselect.set(3)  # Branch on variable with minimum infeasibility
+    # prob.parameters.mip.strategy.variableselect.set(-1) # Strong branching
+    # prob.parameters.mip.strategy.variableselect.set(2)  # Branch on variable with maximum infeasibility
 
     # Resolver LP
     prob.solve()
@@ -366,10 +376,11 @@ def main():
     if(not version_modelo):
         restr_deseables = int(input("Agregar restricciones deseables? (1 = si, 2 = no) "))
         deseables = (restr_deseables == 1)
-        restr_deseable_1 = int(input("Agregar restriccion deseable 1? (1 = si, 2 = no) "))
-        deseable_1 = (restr_deseable_1 == 1)
-        restr_deseable_2 = int(input("Agregar restriccion deseable 2? (1 = si, 2 = no) "))
-        deseable_2 = (restr_deseable_2 == 1)
+        if(deseables):
+            restr_deseable_1 = int(input("Agregar restriccion deseable 1? (1 = si, 2 = no) "))
+            deseable_1 = (restr_deseable_1 == 1)
+            restr_deseable_2 = int(input("Agregar restriccion deseable 2? (1 = si, 2 = no) "))
+            deseable_2 = (restr_deseable_2 == 1)
 
     armar_lp(prob, instancia, version_modelo, deseable_1, deseable_2)
 
