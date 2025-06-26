@@ -262,47 +262,40 @@ def armar_lp(prob, instancia, version, deseable_1, deseable_2):
 def resolver_lp(prob):
     # https://www.ibm.com/docs/en/cofz/12.10.0?topic=cplex-list-parameters
     
-    ###### Modo DEFAULT: ######
-    # prob.parameters.mip.strategy.search.set(1)  # Traditional branch-and-cut search
+    # DESCOMENTAR PARAMETRO A ANALIZAR  
     
-    # SELECCION DE NODOS
-    # prob.parameters.mip.strategy.nodeselect.set(0) # Depth-first search
+    # ##### Modo DEFAULT: ######
+    prob.parameters.mip.strategy.search.set(1) # Traditional branch-and-cut search
 
-    # TIEMPO LIMITE
-    # prob.parameters.mip.tolerances.mipgap.set(0.03) # Por gap (3%)
-    # prob.parameters.timelimit.set(1500)             # Por tiempo (15 minutos)
+    # # TIEMPO LIMITE
+    prob.parameters.timelimit.set(900) # Por tiempo (15 minutos)
 
     ###### ############# ######
 
-    # PREPROCESAMIENTO 
-    # prob.parameters.preprocessing.presolve.set(0) # Apagado
+    # #SELECCION DE NODOS
+    # prob.parameters.mip.strategy.nodeselect.set(0) # Depth-first search
 
-    # ESTRATEGIA DE SELECCION DE NODOS
-    # prob.parameters.mip.strategy.nodeselect.set(1) # Best-bound search
-
-    # HEURISTICAS
-    # prob.parameters.mip.strategy.heuristicfreq.set(20)  # Heuristicas periodicas cada 20 nodos
-    # prob.parameters.mip.strategy.heuristiceffort.set(0) # Heuristicas desactivadas
-
-    # TODOS LOS CORTES DESACTIVADOS
-    # prob.parameters.mip.cuts.cliques.set(-1)
-    # prob.parameters.mip.cuts.covers.set(-1)
-    # prob.parameters.mip.cuts.flowcovers.set(-1)
-    # prob.parameters.mip.cuts.gomory.set(-1)
-    # prob.parameters.mip.cuts.mircut.set(-1)
-    # prob.parameters.mip.cuts.pathcut.set(-1)
-    # prob.parameters.mip.cuts.implied.set(-1)
-    # prob.parameters.mip.cuts.liftproj.set(-1)
-    # prob.parameters.mip.cuts.mcfcut.set(-1)
-    # prob.parameters.mip.cuts.zerohalfcut.set(-1)
-    # prob.parameters.mip.cuts.disjunctive.set(-1)
-    # prob.parameters.mip.cuts.bqp.set(-1)
-
-    # VARIABLE SELECTION 
-    # prob.parameters.mip.strategy.variableselect.set(3)  # Branch on variable with minimum infeasibility
+    # #VARIABLE SELECTION 
     # prob.parameters.mip.strategy.variableselect.set(-1) # Strong branching
-    # prob.parameters.mip.strategy.variableselect.set(2)  # Branch on variable with maximum infeasibility
 
+    # #HEURISTICAS
+    # prob.parameters.mip.strategy.heuristiceffort.set(5)   # Esfuerzo moderado
+    # prob.parameters.mip.strategy.heuristiceffort.set(10)  # Esfuerzo maximo
+
+    # #TODOS LOS CORTES LO MAS AGRESIVOS POSIBLE
+    # prob.parameters.mip.cuts.cliques.set(3)
+    # prob.parameters.mip.cuts.covers.set(3)
+    # prob.parameters.mip.cuts.flowcovers.set(2)
+    # prob.parameters.mip.cuts.gomory.set(2)
+    # prob.parameters.mip.cuts.mircut.set(2)
+    # prob.parameters.mip.cuts.pathcut.set(2)
+    # prob.parameters.mip.cuts.implied.set(2)
+    # prob.parameters.mip.cuts.liftproj.set(3)
+    # prob.parameters.mip.cuts.mcfcut.set(2)
+    # prob.parameters.mip.cuts.zerohalfcut.set(2)
+    # prob.parameters.mip.cuts.disjunctive.set(3)
+    # prob.parameters.mip.cuts.bqp.set(2)
+     
     # Resolver LP
     prob.solve()
 
