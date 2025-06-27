@@ -1,0 +1,88 @@
+\subsection{Comparación de Óptimos}
+Para comparar los valores óptimos de distintas instancias, consideramos cuatro modelos distintos:
+\begin{itemize}
+  \item El modelo \textit{inicial}, donde cada cliente es visitado por el camión una única vez.
+  \item El modelo \textit{completo}, donde se modela la asignación de repartidores a pie o en bicicleta.
+  \item El modelo \textit{completo} con la \textit{$1^{er}$ restricción deseable}, es decir que cada repartidor a pie/bici contratado realice al menos 4 entregas.
+  \item \textit El modelo \textit{completo} con la \textit{$2^{da}$ restricción deseable}, es decir, que existan determinados clientes que deban ser visitados por el camión. (Sin la restricción deseable anterior).
+\end{itemize}
+
+Asi, evaluamos a cada uno de estos modelos respecto a las instancias tipo "genericas" descriptas en la seccion anterior, y comparamos el valor de la funcion objetivo, obteniendo los siguientes resultados:
+
+\subsubsection*{Instancias tipo genericas:}
+
+\begin{table}[H]
+\centering
+\caption{Resultados obtenidos para $dist_{\text{max}} = 10$ y $c_r = 0$}
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Instancia} & \textbf{Inicial} & \textbf{Completo} & \textbf{Deseable 1} & \textbf{Deseable 2} \\
+\midrule
+1 & 370 & 341 (+7 a pie) & 379 (+0 a pie) & 357 (+6 a pie) \\
+2 & 356 & 325 (+5 a pie) & 356 (+0 a pie) & 325 (+5 a pie) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Resultados obtenidos para $dist_{\text{max}} = 10$ y $c_r = 5$}
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Instancia} & \textbf{Inicial} & \textbf{Completo} & \textbf{Deseable 1} & \textbf{Deseable 2} \\
+\midrule
+3 & 409 & 395 (+2 a pie) & 409 (+0 a pie) & 395 (+2 a pie) \\
+4 & 394 & 390 (+1 a pie) & 394 (+0 a pie) & 390 (+1 a pie) \\
+5 & 414 & 405 (+2 a pie) & 414 (+0 a pie) & 405 (+2 a pie) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Resultados obtenidos para $dist_{\text{max}} = 35$ y $c_r = 15$}
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Instancia} & \textbf{Inicial} & \textbf{Completo} & \textbf{Deseable 1} & \textbf{Deseable 2} \\
+\midrule
+6 & 431 & 380 (+7 a bici) & 403 (+8 a bici) & 395 (+6 a bici) \\
+7 & 365 & 329 (+3 a bici) & 357 (+4 a bici) & 343 (+1 a bici) \\
+8 & 456 & 340 (+3 a bici) & 356 (+0 a bici) & 340 (+3 a bici) \\
+9 & 413 & 359 (+4 a bici) & 398 (+4 a bici) & 382 (+4 a bici) \\
+10 & 406 & 374 (+6 a bici) & 390 (+4 a bici) & 393 (+2 a bici) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+En terminos generales, podemos observar que el modelo completo resulta ser una mejora respecto al modelo inicial (dado que estamos minimizando), mientras que agregar las restricciones deseables aumenta el costo de la asignación pero sigue sin ser peor que el modelo inicial.
+
+Por un lado, observando las \textbf{Tablas 1} y \textbf{2}, podemos ver que, logicamente, la alternativa ideal (es decir, la de menor optimo y asi menor costo) es teniendo repartidores con costo 0, utilizando el modelo completo sin las restricciones deseables, aun si aumentar el costo a 5 no aumenta excesivamente el valor optimo. Por otro lado, observando la \textbf{Tabla 3} notamos que contratar bicicletas en vez de repartidores a pie resulta en una aparente reduccion de costos, aun considerando las restricciones deseables. Esto es muy probablemente debido al aumento en la dist_max que representa tener estos repartidores adicionales, que pueden cubrir un mayor terreno, habilitando al camion a hacer menos paradas.
+
+\subsubsection*{Instancias tipo clúster:}
+
+\begin{table}[H]
+\centering
+\caption{Resultados obtenidos para $dist_{\text{max}} = 10$ y $c_r = 2$}
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Instancia} & \textbf{Inicial} & \textbf{Completo} & \textbf{Deseable 1} & \textbf{Deseable 2} \\
+\midrule
+1 & 77 & 73(+4 a pie) & 76(+4 a pie) & 73(+5 a pie) \\
+2 & 80 & 78(+4 a pie) & 78(+4 a pie) & 80(+1 a pie) \\
+3 & 78 & 78(+3 a pie) & 78(+0 a pie) & 77(+1 a pie) \\
+4 & 75 & 75(+3 a pie) & 75(+0 a pie) & 75(+0 a pie) \\
+5 & 79 & 75(+4 a pie) & 78(+4 a pie) & 77(+1 a pie) \\
+6 & 78 & 74(+3 a pie) & 77(+4 a pie) & 77(+2 a pie) \\
+7 & 73 & 69(+3 a pie) & 73(+0 a pie) & 71(+2 a pie) \\
+8 & 79 & 77(+5 a pie) & 79(+0 a pie) & 78(+4 a pie) \\
+9 & 79 & 75(+5 a pie) & 79(+0 a pie) & 75(+5 a pie) \\
+10 & 79 & 75(+2 a pie) & 76(+4 a pie) & 75(+2 a pie) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Considerando instancias de tipo cluster (\textbf{Tabla 4}), observamos la misma situacion inicial, donde el cambio del modelo inicial al completo resulta en un menor valor optimo, reforzando la conclusion que el modelo completo optimiza mejor nuestro problema que el inicial. Al igual que con las instancias de tipo generico, observamos que agregar cualquiera de las dos restricciones deseables generalmente resulta en un valor optimo mayor o igual al del modelo completo.
+
+Sin embargo, resulta immediato observar que los valores optimos son mucho menores a aquellos de las instancias genericas, incluso las de costo 0. Esto es debido a que las los clientes estan ubicados en clusters, por lo que resulta facil enviar al camion a un nodo cercano al centro del cluster, y hacer uso de los repartidores a pie. Tambien, debido a la cercania de los nodos dentro de cada cluster, resulta facil para el camion recorrer multiples nodos sin cubrir mucha distancia (pues, en nuestro modelo, el costo del recorrido de un camion depende de la distancia euclidea recorrida). Asi, podemos concluir que las instancias de tipo cluster, que representan un escenario mas realista respecto a las instancias de tipo genericas resultan en costos mucho menores.
+
+\newpage
