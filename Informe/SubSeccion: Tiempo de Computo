@@ -1,0 +1,77 @@
+\subsection{Análisis sobre tiempos de computo.}
+
+Seleccionamos y modificamos algunos de los parámetros que ofrece el paquete CPLEX para estudiar el impacto en el tiempo de computo de la solución optima. Estos son los parámetros que se consideran \textit{Default} según su documentación oficial\footnote{\url{https://www.ibm.com/docs/en/cofz/12.10.0?topic=cplex-list-parameters}}:
+
+\begin{itemize}
+    \item [-]Estrategia de seleccion de nodo: \textit{best-bound search}
+    \item [-]Estrategia de búsqueda: \textit{branch-and-cut search}
+    \item [-]Estrategia de selección de variables (branching variable): selecciona la mejor regla basado en el problema y su progreso.
+    \item [-]Heurisiticas: Esfuerzo base 
+    \item [-]Preprocesamiento: activado
+    \item [-]Cortes: todos activados
+
+\end{itemize}
+
+En este experimento, utilizamos nuevamente 10 instancias de tipo genéricas, esta vez con una cantidad de 80 clientes (\textit{Tipo dificil}), con el fin de analizar mejor el tiempo de resolución, ya que este será mayor. Mantuvimos los siguientes parámetros: \texttt{dist\_max = 15}, \texttt{costo\_repartidor = 15}, y un 10\% de los clientes que requieren entrega de productos refrigerados. Esta elección se basa en que consideramos estos valores como representativos dentro de las restricciones planteadas en el \hyperref[sec:completo]{Modelo Completo}, lo que se traduce en una búsqueda mas intensiva de soluciones. También establecimos un limite de tiempo de \textit{15 minutos}.
+
+Cada uno de los parámetros son analizados por separado, combinando la configuración Default $+$ Parámetro.
+
+\begin{table}[H]
+\centering
+\caption{Tiempo de resolución (en segundos) alcanzado al limite de tiempo para distintas combinaciones de parámetros. $X =$ supera tiempo limite.}
+\begin{tabular}{l p{1.5cm} p{1.5cm} p{2.2cm} p{2.2cm} p{2.2cm} p{2cm}}
+\toprule
+\textbf{Instancia} & \textbf{Default} & \textbf{Depth First search} &\textbf{Strong branching} & \textbf{Heuristicas: Esfuerzo maximo} & \textbf{Heuristicas: cada 10 nodos} & \textbf{Cortes: agresivos} \\
+\midrule
+1 & $ 5,14  $   & $ 7,53  $   & $ 216,45$     & $ 4,12 $ & $ 5,19 $  & $3,33$ \\
+2 & $ 10,31$    & $ 11,00$    & X             & $ 10,02$ & $12,00 $  & $7,08 $ \\
+3 & $6,00$      & $9,59$      & X             & $6,25$   & $5,38$    & $20,14$ \\
+4 & $102,27$    & X           & X             & $114,39$ & $80,34$   & $161,42$ \\
+5 & $10,52$     & $13,44$     & X             & $10,74$  & $7,72$    & $10,72$\\
+6 & $111,98$    & $299,53$    & X             & $87,56$  & $76,91$   & $99,50$\\
+7 & $4,22$      & $1,39$      & X             & $1,73$   & $2,06$    & $5,55$\\
+8 & $252,77$    & $98,00$     & X             & $90,11$  & $78,30$   & $30,53$\\
+9 & $2,00$      & $2,20$      & $192,30$      & $2,23$   & $2,59$    & $4,80$.\\
+10 & $8,36$     & $8,72$      & X             & $6,67$   & $6,78$    & $7,52$\\
+\midrule
+\textbf{Promedio} & $51,36$ & $50,16$ & X & $33,38$ & $27,73$ & $35,06$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Contrario a lo esperado, podemos observar que, en promedio, el tiempo de resolucion con los parametros "default" resulta mas alto que para cualquier otra combinacion de parametros probada, con los mejores tiempos de resolucion correspondientes a la combinacion de los parametros default + Heuristicas cada 10 nodos. Sin embargo, el tiempo promedio esta altamente influenciado por algunas instancias con tiempos de resolucion extremadamente altos en comparacion al resto, las instancias 4, 6 y 8, que poseen tiempos de resolucion extremadamente altos con todas las combinaciones de parametros.
+
+Por otro lado, observamos que strong branching casi siempre excedio el tiempo limite de 15 minutos, y en los casos en los que no, fue la combinacion de parametros que mas tiempo tardo en resolver las instancias, por amplia diferencia, llevandonos a considerar que strong branching no es un buen parametro para resolver este problema.
+
+Realizamos otro experimento con 7 instancias de tipo cluster, esta vez con una cantidad de 40 clientes (dado que un mayor numero de clientes toma una cantidad de tiempo exponencial en resolver). Mantuvimos los siguientes parametros: \texttt{dist\_max = 15}, \texttt{costo\_repartidor = 5}, considerando un tiempo limite de 15 minutos, y comparando los parametros default, con maximo esfuerzo en heuristicas y con cortes agresivos. Por otro lado, el resto de las condiciones son iguales a las del experimento anterior.
+
+\begin{table}[H]
+\centering
+\caption{Comparación de \textit{Gap} y mejor solución entera alcanzada entre parámetros Default, heurísticas con esfuerzo máximo y cortes agresivos.}
+\begin{tabular}{l cc cc cc}
+\toprule
+\textbf{Instancia} & \multicolumn{2}{c}{\textbf{Default}} & \multicolumn{2}{c}{\textbf{Heurísticas: Esfuerzo máximo}} & \multicolumn{2}{c}{\textbf{Cortes: Agresivos}} \\
+\cmidrule(lr){2-3} \cmidrule(lr){4-5} \cmidrule(lr){6-7}
+ & \textbf{Gap} & \textbf{Best Int.} & \textbf{Gap} & \textbf{Best Int.} & \textbf{Gap} & \textbf{Best Int.} \\
+\midrule
+1  & $29,12\%$ & $244$ & $30,60\%$ & $249$ & $29,64\%$ & $244$ \\
+2  & $23,01\%$ & $241$ & $22,53\%$ & $241$ & $21,99\%$ & $241$ \\
+3  & $29,46\%$ & $246$ & $29,70\%$ & $244$ & $29,93\%$ & $246$ \\
+4  & $27,63\%$ & $236$ & $27,49\%$ & $236$ & $23,64\%$ & $224$ \\
+5  & $26,17\%$ & $234$ & $26,46\%$ & $234$ & $25,98\%$ & $234$ \\
+6  & $27,01\%$ & $238$ & $27,09\%$ & $238$ & $26,42\%$ & $238$ \\
+7  & $24,57\%$ & $240$ & $25,96\%$ & $240$ & $26,24\%$ & $240$ \\
+\midrule
+\textbf{Gap Promedio} & $26,71\%$ & - & $27,12\%$ & - & $26,55\%$ & - \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Observando nuestros resultados, notamos que, a pesar de que ninguna instancia fue resuelta por completo dentro del tiempo límite de 15 minutos, podemos extraer algunas conclusiones relevantes. 
+
+En primer lugar, los valores promedio del \textit{gap} final son similares entre las configuraciones evaluadas: el uso de cortes agresivos obtiene el menor \textit{gap} promedio ($26,55\%$), seguido por la configuración por defecto ($26,71\%$), mientras que las heurísticas con esfuerzo máximo tienen un rendimiento ligeramente inferior ($27,12\%$). Sin embargo, la diferencia del gap promedio es inferior al $1\%$, por lo que no podemos afirmar que una combinacion de parametros sea mas eficiente que otra. Además, en términos de la mejor solución entera encontrada, todas las configuraciones presentan comportamientos muy similares, con pequeñas variaciones entre las estrategias.
+
+Asi, vemos que considerando instancias mas complejas (con mayor cantidad de nodos, y agrupados en clusters de alta densidad) el beneficio de modificar los parametros en distintas combinaciones resulta menos evidente.
+
+
+\end{document}
