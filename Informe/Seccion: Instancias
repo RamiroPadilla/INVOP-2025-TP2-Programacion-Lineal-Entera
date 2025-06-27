@@ -1,0 +1,37 @@
+\section{Instancias}
+
+Para realizar nuestro análisis, primero generamos distintas variaciones de instancias según los parámetros \textit{cant\_clientes}, \textit{dist\_max} y \textit{costo\_repartidor} descriptos en la consigna. Para todas las instancias, elegimos al azar un 10\% de los clientes, que van a necesitar refrigeración, y un 15\% de los clientes, que van a ser exclusivos. Para recrear escenarios realistas, propusimos que el costo de ir de un cliente a otro en camión es igual a la distancia recorrida. Así, distinguimos tres tipos de instancias separadas.
+
+\textbf{Instancias genéricas}: generamos 10 instancias de este tipo. Buscamos recrear un escenario donde los clientes están dispersos de forma aleatoria en una grilla de $100\times100$, Las coordenadas $(x,y)$ de cada cliente fueron obtenidas mediante un muestreo uniforme en la grilla. Ademas, se utiliza la distancia euclidiana como la distancia entre ellos, redondeada a valores enteros. Para estas instancias, mantuvimos los siguientes parámetros:
+
+\begin{itemize}
+  \item \textit{cant\_clientes} = 20
+  \item \textit{dist\_max} = \{10, 35\} (Establecemos que dist\_max de 10 son para repartidores a pie y 35 para repartidores en bici)
+  \item \textit{costo\_repartidor} = \{0, 5, 15\} (Usamos 0 para 2 instancias, 5 para 3 instancias y 15 para otras 5 instancias)
+\end{itemize}
+
+\textbf{Instancias cluster}: utilizamos 10 instancias, las mismas modelan un escenario donde los clientes están agrupados en 3 clusters (donde cada uno de los clusters esta centrado en una coordenada fija), distribuyendo el numero de clientes por cluster de forma equitativa, modelando así un escenario mas realista. Para estas instancias, utilizamos los siguientes parámetros:
+
+\begin{itemize}
+  \item \textit{cant\_clientes} = 20
+  \item \textit{dist\_max} = 10
+  \item \textit{costo\_repartidor} = 2
+\end{itemize}
+
+\textbf{Instancias dificiles}: utilizamos 10 instancias, modeladas igual que las instancias genericas, solo que con los siguientes parametros:
+
+\begin{itemize}
+  \item \textit{cant\_clientes} = 80
+  \item \textit{dist\_max} = 15
+  \item \textit{costo\_repartidor} = 15
+\end{itemize}
+
+\textbf{Instancias cluster dificiles}: utilizamos otras 10 instancias, modeladas igual que las instancias de tipo cluster, solo que con los siguientes parametros:
+
+\begin{itemize}
+  \item \textit{cant\_clientes} = 40
+  \item \textit{dist\_max} = 15
+  \item \textit{costo\_repartidor} = 5
+\end{itemize}
+
+\newpage
