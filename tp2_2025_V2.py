@@ -265,9 +265,11 @@ def resolver_lp(prob):
     # DESCOMENTAR PARAMETRO A ANALIZAR  
     
     # ##### Modo DEFAULT: ######
+    
     prob.parameters.mip.strategy.search.set(1) # Traditional branch-and-cut search
 
     # # TIEMPO LIMITE
+    # prob.parameters.mip.tolerances.mipgap.set(0.02) # Por gap menor a 2%
     prob.parameters.timelimit.set(900) # Por tiempo (15 minutos)
 
     ###### ############# ######
@@ -279,10 +281,10 @@ def resolver_lp(prob):
     # prob.parameters.mip.strategy.variableselect.set(-1) # Strong branching
 
     # #HEURISTICAS
-    # prob.parameters.mip.strategy.heuristiceffort.set(5)   # Esfuerzo moderado
     # prob.parameters.mip.strategy.heuristiceffort.set(10)  # Esfuerzo maximo
-
-    # #TODOS LOS CORTES LO MAS AGRESIVOS POSIBLE
+    # prob.parameters.mip.strategy.heuristicfreq.set(10)   # Aplicar cada 10 nodos
+    
+    # # #TODOS LOS CORTES LO MAS AGRESIVOS POSIBLE
     # prob.parameters.mip.cuts.cliques.set(3)
     # prob.parameters.mip.cuts.covers.set(3)
     # prob.parameters.mip.cuts.flowcovers.set(2)
